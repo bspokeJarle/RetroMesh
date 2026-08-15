@@ -25,3 +25,5 @@ dotnet test .\RetroMesh.Engine.slnx --no-restore
 
 The Omega Strain consumes RetroMesh through the local package source configured
 in the repository root `NuGet.config`.
+
+New games should start from the separate `RetroMesh.GameTemplate` repository.
