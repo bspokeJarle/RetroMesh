@@ -37,8 +37,11 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
     private readonly ID3D11SamplerState sampler;
     private readonly ID3D11RasterizerState rasterizerState;
     private readonly ID3D11BlendState blendState;
+    private readonly ID3D11DepthStencilState depthStencilState;
     private ID3D11Texture2D? backBuffer;
     private ID3D11RenderTargetView? renderTarget;
+    private ID3D11Texture2D? depthBuffer;
+    private ID3D11DepthStencilView? depthStencilView;
     private ID3D11Buffer? vertexBuffer;
     private int vertexCapacity;
     private int width;
@@ -121,6 +124,13 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
             AntialiasedLineEnable = false
         });
         blendState = device.CreateBlendState(BlendDescription.AlphaBlend);
+        depthStencilState = device.CreateDepthStencilState(new DepthStencilDescription
+        {
+            DepthEnable = true,
+            DepthWriteMask = DepthWriteMask.All,
+            DepthFunc = ComparisonFunction.LessEqual,
+            StencilEnable = false
+        });
         Textures = new Direct3D11TextureRegistry(device);
         CreateBackBuffer();
     }
@@ -142,8 +152,12 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         this.width = width;
         this.height = height;
         context.UnsetRenderTargets();
+        depthStencilView?.Dispose();
+        depthBuffer?.Dispose();
         renderTarget?.Dispose();
         backBuffer?.Dispose();
+        depthStencilView = null;
+        depthBuffer = null;
         renderTarget = null;
         backBuffer = null;
         swapChain.ResizeBuffers(2, (uint)width, (uint)height, Format.B8G8R8A8_UNorm, SwapChainFlags.None).CheckError();
@@ -167,11 +181,13 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         EnsureVertexBuffer(vertices.Count);
         UploadVertices();
 
-        context.OMSetRenderTargets(renderTarget!);
+        context.OMSetRenderTargets(renderTarget!, depthStencilView);
         context.OMSetBlendState(blendState);
+        context.OMSetDepthStencilState(depthStencilState);
         context.RSSetState(rasterizerState);
         context.RSSetViewport(0, 0, width, height);
         context.ClearRenderTargetView(renderTarget!, ClearColor);
+        context.ClearDepthStencilView(depthStencilView!, DepthStencilClearFlags.Depth, 1f, 0);
         context.IASetPrimitiveTopology(PrimitiveTopology.TriangleList);
         context.IASetInputLayout(inputLayout);
         context.IASetVertexBuffer(0, vertexBuffer!, (uint)Marshal.SizeOf<GpuVertex>());
@@ -269,6 +285,18 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
     {
         backBuffer = swapChain.GetBuffer<ID3D11Texture2D>(0);
         renderTarget = device.CreateRenderTargetView(backBuffer);
+        depthBuffer = device.CreateTexture2D(new Texture2DDescription
+        {
+            Width = (uint)width,
+            Height = (uint)height,
+            MipLevels = 1,
+            ArraySize = 1,
+            Format = Format.D32_Float,
+            SampleDescription = new SampleDescription(1, 0),
+            Usage = ResourceUsage.Default,
+            BindFlags = BindFlags.DepthStencil
+        });
+        depthStencilView = device.CreateDepthStencilView(depthBuffer);
     }
 
     public void Dispose()
@@ -279,12 +307,15 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         context.ClearState();
         Textures.Dispose();
         vertexBuffer?.Dispose();
+        depthStencilState.Dispose();
         blendState.Dispose();
         rasterizerState.Dispose();
         sampler.Dispose();
         inputLayout.Dispose();
         pixelShader.Dispose();
         vertexShader.Dispose();
+        depthStencilView?.Dispose();
+        depthBuffer?.Dispose();
         renderTarget?.Dispose();
         backBuffer?.Dispose();
         swapChain.Dispose();
