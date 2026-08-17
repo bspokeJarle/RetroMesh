@@ -5,6 +5,8 @@ namespace RetroMesh.Engine
     public interface IRenderable3dObject
     {
         int ObjectId { get; set; }
+        RetroMeshObjType ObjectType { get; set; }
+        TwoDRenderState? TwoDState { get; set; }
         string ObjectName { get; set; }
         int? RotationOffsetX { get; set; }
         int? RotationOffsetY { get; set; }
@@ -23,5 +25,10 @@ namespace RetroMesh.Engine
         bool UseSurfaceFootprintPivot { get; set; }
         bool IsActive { get; set; }
         float ZSortBias { get; set; }
+    }
+    public enum RetroMeshObjType
+    {
+        ThreeD,
+        TwoD,
     }
 }

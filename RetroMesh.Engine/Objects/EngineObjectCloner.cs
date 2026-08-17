@@ -10,7 +10,7 @@ namespace RetroMesh.Engine
             List<TObject> result,
             Func<int, TObject> objectFactory,
             Func<I3dObjectPart> objectPartFactory,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory,
             bool copyCrashboxes,
             Action<TSource, TObject>? copyAdditionalState = null)
@@ -47,7 +47,7 @@ namespace RetroMesh.Engine
             IRenderable3dObject original,
             Func<int, TObject> objectFactory,
             Func<I3dObjectPart> objectPartFactory,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory,
             bool copyCrashboxes)
             where TObject : IRenderable3dObject
@@ -55,6 +55,8 @@ namespace RetroMesh.Engine
             var copy = objectFactory(original.ObjectId);
 
             copy.ObjectId = original.ObjectId;
+            copy.ObjectType = original.ObjectType;
+            copy.TwoDState = CopyTwoDRenderState(original.TwoDState);
             copy.ObjectOffsets = CopyOptionalVector(original.ObjectOffsets, vectorFactory);
             copy.Rotation = CopyOptionalVector(original.Rotation, vectorFactory);
             copy.WorldPosition = CopyOptionalVector(original.WorldPosition, vectorFactory);
@@ -82,7 +84,7 @@ namespace RetroMesh.Engine
         public static List<I3dObjectPart> CopyObjectParts(
             IReadOnlyList<I3dObjectPart> originalParts,
             Func<I3dObjectPart> objectPartFactory,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory)
         {
             var objectParts = new List<I3dObjectPart>(originalParts.Count);
@@ -100,12 +102,12 @@ namespace RetroMesh.Engine
             return objectParts;
         }
 
-        public static List<ITriangleMeshWithColor> CopyTriangles(
-            IReadOnlyList<ITriangleMeshWithColor> triangles,
-            Func<ITriangleMeshWithColor> triangleFactory,
+        public static List<ITriangleMeshWithColorAndTexture> CopyTriangles(
+            IReadOnlyList<ITriangleMeshWithColorAndTexture> triangles,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory)
         {
-            var copiedTriangles = new List<ITriangleMeshWithColor>(triangles.Count);
+            var copiedTriangles = new List<ITriangleMeshWithColorAndTexture>(triangles.Count);
 
             for (int triangleIndex = 0; triangleIndex < triangles.Count; triangleIndex++)
             {
@@ -115,15 +117,19 @@ namespace RetroMesh.Engine
             return copiedTriangles;
         }
 
-        public static ITriangleMeshWithColor CopyTriangle(
-            ITriangleMeshWithColor triangle,
-            Func<ITriangleMeshWithColor> triangleFactory,
+        public static ITriangleMeshWithColorAndTexture CopyTriangle(
+            ITriangleMeshWithColorAndTexture triangle,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory)
         {
             var triangleCopy = triangleFactory();
             triangleCopy.landBasedPosition = triangle.landBasedPosition;
             triangleCopy.angle = triangle.angle;
             triangleCopy.Color = triangle.Color;
+            triangleCopy.TextureId = triangle.TextureId;
+            triangleCopy.Uv1 = triangle.Uv1;
+            triangleCopy.Uv2 = triangle.Uv2;
+            triangleCopy.Uv3 = triangle.Uv3;
             triangleCopy.noHidden = triangle.noHidden;
 
             var mesh = triangle as EngineTriangleMesh;
@@ -140,6 +146,21 @@ namespace RetroMesh.Engine
         private static IVector3? CopyOptionalVector(IVector3? vector, Func<IVector3, IVector3> vectorFactory)
         {
             return vector == null ? null : vectorFactory(vector);
+        }
+
+        private static TwoDRenderState? CopyTwoDRenderState(TwoDRenderState? state)
+        {
+            if (state == null)
+                return null;
+
+            return new TwoDRenderState
+            {
+                AssetId = state.AssetId,
+                ActiveAnimationId = state.ActiveAnimationId,
+                CurrentFrameId = state.CurrentFrameId,
+                FrameIndex = state.FrameIndex,
+                ElapsedMilliseconds = state.ElapsedMilliseconds
+            };
         }
 
         private static void CopyOptionalVector(

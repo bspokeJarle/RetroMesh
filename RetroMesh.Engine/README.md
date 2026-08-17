@@ -18,7 +18,8 @@ checkpoint is.
 ## What The Engine Provides
 
 - Object primitives: `IRenderable3dObject`, `Engine3dObject`,
-  `I3dObjectPart`, `ITriangleMesh`, `ITriangleMeshWithColor`, and `IVector3`.
+  `I3dObjectPart`, `ITriangleMesh`, `ITriangleMeshWithColorAndTexture`,
+  `TextureCoordinate`, and `IVector3`.
 - Geometry helpers: mesh rotation, vector math, bounds, ground projection,
   surface footprint alignment, and shadow projection.
 - Rendering preparation: perspective projection from world objects to projected
@@ -70,7 +71,15 @@ abstractions and should keep adapter code close to the game project.
    `Engine3dObject`.
 
 2. Build meshes from object parts and triangles.
-   Use `I3dObjectPart` and `ITriangleMeshWithColor` to describe visual geometry.
+   Use `I3dObjectPart` and `ITriangleMeshWithColorAndTexture` to describe visual
+   geometry. A triangle without a `TextureId` uses the color rendering path. A
+   triangle with a `TextureId` carries one UV coordinate per vertex so the client
+   renderer can resolve and map the named texture resource.
+
+   A 2D object stores its stable animation asset, active animation, selected
+   frame, and playback position in `TwoDRenderState`. Gameplay or animation code
+   advances that state; rendering consumes `CurrentFrameId` without owning the
+   animation clock.
    Keep meshes centered around sensible pivots, especially for surface-based
    objects that should stand on terrain.
 

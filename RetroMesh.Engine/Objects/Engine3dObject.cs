@@ -5,6 +5,8 @@ namespace RetroMesh.Engine
     public class Engine3dObject : IRenderable3dObject
     {
         public required int ObjectId { get; set; }
+        public RetroMeshObjType ObjectType { get; set; } = RetroMeshObjType.ThreeD;
+        public TwoDRenderState? TwoDState { get; set; }
         public List<I3dObjectPart> ObjectParts { get; set; } = new();
         public int? RotationOffsetY { get; set; }
         public int? RotationOffsetX { get; set; }

@@ -68,8 +68,12 @@ public class EngineObjectShadowProjectionMathTests
         Assert.AreEqual(36f, projected.Vertex1.z, 0.001f);
     }
 
-    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColor
+    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColorAndTexture
     {
         public string? Color { get; set; }
+        public string? TextureId { get; set; }
+        public TextureCoordinate Uv1 { get; set; }
+        public TextureCoordinate Uv2 { get; set; }
+        public TextureCoordinate Uv3 { get; set; }
     }
 }

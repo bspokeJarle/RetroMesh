@@ -26,6 +26,10 @@ public class EnginePerspectiveProjectionPipelineTests
         Assert.AreEqual(420, result[0].Y3);
         Assert.AreEqual("Main", result[0].PartName);
         Assert.AreEqual("ffffff", result[0].Color);
+        Assert.AreEqual("bed.top.texture", result[0].TextureId);
+        Assert.AreEqual(new TextureCoordinate(0f, 0f), result[0].Uv1);
+        Assert.AreEqual(new TextureCoordinate(1f, 0f), result[0].Uv2);
+        Assert.AreEqual(new TextureCoordinate(0.5f, 1f), result[0].Uv3);
     }
 
     [TestMethod]
@@ -153,11 +157,15 @@ public class EnginePerspectiveProjectionPipelineTests
                 {
                     PartName = partName,
                     IsVisible = true,
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
                             Color = "ffffff",
+                            TextureId = "bed.top.texture",
+                            Uv1 = new TextureCoordinate(0f, 0f),
+                            Uv2 = new TextureCoordinate(1f, 0f),
+                            Uv3 = new TextureCoordinate(0.5f, 1f),
                             noHidden = true,
                             normal1 = new EngineVector3(0f, 0f, 1f),
                             vert1 = new EngineVector3(-10f, -10f, 0f),
@@ -170,8 +178,12 @@ public class EnginePerspectiveProjectionPipelineTests
         };
     }
 
-    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColor
+    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColorAndTexture
     {
         public string? Color { get; set; }
+        public string? TextureId { get; set; }
+        public TextureCoordinate Uv1 { get; set; }
+        public TextureCoordinate Uv2 { get; set; }
+        public TextureCoordinate Uv3 { get; set; }
     }
 }

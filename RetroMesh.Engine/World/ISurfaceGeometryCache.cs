@@ -4,8 +4,8 @@ namespace RetroMesh.Engine
 {
     public interface ISurfaceGeometryCache
     {
-        List<ITriangleMeshWithColor> RotatedSurfaceTriangles { get; set; }
-        Dictionary<long, ITriangleMeshWithColor> RotatedSurfaceTriangleByLandId { get; set; }
+        List<ITriangleMeshWithColorAndTexture> RotatedSurfaceTriangles { get; set; }
+        Dictionary<long, ITriangleMeshWithColorAndTexture> RotatedSurfaceTriangleByLandId { get; set; }
         HashSet<long?> LandBasedIds { get; set; }
     }
 }

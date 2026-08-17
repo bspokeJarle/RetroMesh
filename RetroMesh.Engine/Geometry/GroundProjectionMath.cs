@@ -16,7 +16,7 @@ namespace RetroMesh.Engine
         public const float DefaultShadowVertexStretchBoost = 1.2f;
 
         public static bool TryGetSurfaceGroundPoint(
-            IReadOnlyList<ITriangleMeshWithColor>? rotatedTiles,
+            IReadOnlyList<ITriangleMeshWithColorAndTexture>? rotatedTiles,
             float targetX,
             float targetZ,
             out float groundX,
@@ -64,7 +64,7 @@ namespace RetroMesh.Engine
         }
 
         public static bool TryGetFrontmostSurfaceGroundPoint(
-            IReadOnlyList<ITriangleMeshWithColor>? rotatedTiles,
+            IReadOnlyList<ITriangleMeshWithColorAndTexture>? rotatedTiles,
             float targetX,
             out float groundX,
             out float groundY,
@@ -98,7 +98,7 @@ namespace RetroMesh.Engine
         }
 
         private static bool TryInterpolateTriangleY(
-            ITriangleMeshWithColor triangle,
+            ITriangleMeshWithColorAndTexture triangle,
             float targetX,
             float targetZ,
             out float groundY)

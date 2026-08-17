@@ -42,7 +42,7 @@ namespace RetroMesh.Engine
             }
         }
 
-        private static ITriangleMeshWithColor RotateTriangle(ITriangleMeshWithColor coord, float cosRes, float sinRes, char axis)
+        private static ITriangleMeshWithColorAndTexture RotateTriangle(ITriangleMeshWithColorAndTexture coord, float cosRes, float sinRes, char axis)
         {
             RotateToVector(coord.vert1, coord.vert1, cosRes, sinRes, axis);
             RotateToVector(coord.vert2, coord.vert2, cosRes, sinRes, axis);
@@ -51,7 +51,7 @@ namespace RetroMesh.Engine
             return CalculateNormalAndAngle(coord);
         }
 
-        private static ITriangleMeshWithColor CalculateNormalAndAngle(ITriangleMeshWithColor coord)
+        private static ITriangleMeshWithColorAndTexture CalculateNormalAndAngle(ITriangleMeshWithColorAndTexture coord)
         {
             var v1 = coord.vert1;
             var v2 = coord.vert2;
@@ -84,16 +84,16 @@ namespace RetroMesh.Engine
             return coord;
         }
 
-        public ITriangleMeshWithColor RotateOnX(float cosRes, float sinRes, ITriangleMeshWithColor coord) =>
+        public ITriangleMeshWithColorAndTexture RotateOnX(float cosRes, float sinRes, ITriangleMeshWithColorAndTexture coord) =>
             RotateTriangle(coord, cosRes, sinRes, 'X');
 
-        public ITriangleMeshWithColor RotateOnY(float cosRes, float sinRes, ITriangleMeshWithColor coord) =>
+        public ITriangleMeshWithColorAndTexture RotateOnY(float cosRes, float sinRes, ITriangleMeshWithColorAndTexture coord) =>
             RotateTriangle(coord, cosRes, sinRes, 'Y');
 
-        public ITriangleMeshWithColor RotateOnZ(float cosRes, float sinRes, ITriangleMeshWithColor coord) =>
+        public ITriangleMeshWithColorAndTexture RotateOnZ(float cosRes, float sinRes, ITriangleMeshWithColorAndTexture coord) =>
             RotateTriangle(coord, cosRes, sinRes, 'Z');
 
-        public List<ITriangleMeshWithColor> RotateMesh(List<ITriangleMeshWithColor> mesh, double angle, char axis)
+        public List<ITriangleMeshWithColorAndTexture> RotateMesh(List<ITriangleMeshWithColorAndTexture> mesh, double angle, char axis)
         {
             double radian = Math.PI * angle / 180.0;
             float cosRes = (float)Math.Cos(radian);
@@ -107,13 +107,13 @@ namespace RetroMesh.Engine
             return mesh;
         }
 
-        public List<ITriangleMeshWithColor> RotateXMesh(List<ITriangleMeshWithColor> mesh, double angle) =>
+        public List<ITriangleMeshWithColorAndTexture> RotateXMesh(List<ITriangleMeshWithColorAndTexture> mesh, double angle) =>
             RotateMesh(mesh, angle, 'X');
 
-        public List<ITriangleMeshWithColor> RotateYMesh(List<ITriangleMeshWithColor> mesh, double angle) =>
+        public List<ITriangleMeshWithColorAndTexture> RotateYMesh(List<ITriangleMeshWithColorAndTexture> mesh, double angle) =>
             RotateMesh(mesh, angle, 'Y');
 
-        public List<ITriangleMeshWithColor> RotateZMesh(List<ITriangleMeshWithColor> mesh, double angle) =>
+        public List<ITriangleMeshWithColorAndTexture> RotateZMesh(List<ITriangleMeshWithColorAndTexture> mesh, double angle) =>
             RotateMesh(mesh, angle, 'Z');
 
         public EngineVector3 RotatePoint(double angleInDegrees, IVector3 coord, char axis)

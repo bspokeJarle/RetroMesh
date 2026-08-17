@@ -63,8 +63,8 @@ namespace RetroMesh.Engine
             return meshRotation.RotatePoint(rotation.x, rotatedPoint, 'X');
         }
 
-        public List<ITriangleMeshWithColor> RotateMesh(
-            List<ITriangleMeshWithColor> mesh,
+        public List<ITriangleMeshWithColorAndTexture> RotateMesh(
+            List<ITriangleMeshWithColorAndTexture> mesh,
             IVector3 rotation)
         {
             var rotatedMesh = meshRotation.RotateMesh(mesh, rotation.z, 'Z');

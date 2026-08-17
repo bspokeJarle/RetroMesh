@@ -8,7 +8,7 @@ namespace RetroMesh.Engine
     {
         public const string ShadowColorHex = "000000";
 
-        public static void ApplyScaleToTriangles(IReadOnlyList<ITriangleMeshWithColor>? triangles, float scale)
+        public static void ApplyScaleToTriangles(IReadOnlyList<ITriangleMeshWithColorAndTexture>? triangles, float scale)
         {
             if (triangles == null || triangles.Count == 0)
                 return;
@@ -23,7 +23,7 @@ namespace RetroMesh.Engine
         }
 
         public static void ApplyPositiveRotationOffsetToTriangle(
-            ITriangleMeshWithColor triangle,
+            ITriangleMeshWithColorAndTexture triangle,
             float? offsetX,
             float? offsetY,
             float? offsetZ)
@@ -174,7 +174,7 @@ namespace RetroMesh.Engine
         public static void AddSimplifiedShadowPart(
             IRenderable3dObject? actualObject,
             Func<I3dObjectPart> objectPartFactory,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<float, float, float, IVector3> vectorFactory,
             bool useFlatQuad = false,
             int layers = 2)
@@ -292,7 +292,7 @@ namespace RetroMesh.Engine
             ringZ[0] = minZ;
             ringZ[layerCount - 1] = maxZ;
 
-            var tris = new List<ITriangleMeshWithColor>(sideCount * 2 * (layerCount - 1) + sideCount * 2);
+            var tris = new List<ITriangleMeshWithColorAndTexture>(sideCount * 2 * (layerCount - 1) + sideCount * 2);
 
             tris.AddRange(FanTriangulateXY(resampled[0], z: ringZ[0], ShadowColorHex, triangleFactory, vectorFactory));
             tris.AddRange(FanTriangulateXY(resampled[layerCount - 1], z: ringZ[layerCount - 1], ShadowColorHex, triangleFactory, vectorFactory));
@@ -320,7 +320,7 @@ namespace RetroMesh.Engine
 
         public static void AddCustomShadowPart(
             IRenderable3dObject? actualObject,
-            IReadOnlyList<ITriangleMeshWithColor>? triangles,
+            IReadOnlyList<ITriangleMeshWithColorAndTexture>? triangles,
             Func<I3dObjectPart> objectPartFactory)
         {
             if (actualObject == null || actualObject.ObjectParts == null || triangles == null || triangles.Count == 0)
@@ -376,7 +376,7 @@ namespace RetroMesh.Engine
         }
 
         public static List<List<IVector3>> GenerateTriangleAabbCrashBox(
-            ITriangleMeshWithColor triangle,
+            ITriangleMeshWithColorAndTexture triangle,
             Func<float, float, float, IVector3> vectorFactory)
         {
             float minX = MathF.Min(triangle.vert1.x, MathF.Min(triangle.vert2.x, triangle.vert3.x));
@@ -422,13 +422,13 @@ namespace RetroMesh.Engine
             return overlapX && overlapY && overlapZ;
         }
 
-        public static List<ITriangleMeshWithColor> ConvertToTrianglesWithColor(
+        public static List<ITriangleMeshWithColorAndTexture> ConvertToTrianglesWithColor(
             IReadOnlyList<ITriangleMesh> triangles,
             string color,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<IVector3, IVector3> vectorFactory)
         {
-            var trianglesWithColor = new List<ITriangleMeshWithColor>(triangles.Count);
+            var trianglesWithColor = new List<ITriangleMeshWithColorAndTexture>(triangles.Count);
             foreach (var triangle in triangles)
             {
                 var copy = triangleFactory();
@@ -449,7 +449,7 @@ namespace RetroMesh.Engine
         }
 
         public static void AddQuadOutward<TTriangle>(
-            IList<ITriangleMeshWithColor> tris,
+            IList<ITriangleMeshWithColorAndTexture> tris,
             IVector3 v1,
             IVector3 v2,
             IVector3 v3,
@@ -458,7 +458,7 @@ namespace RetroMesh.Engine
             string color,
             Func<TTriangle> triangleFactory,
             bool noHidden = false)
-            where TTriangle : ITriangleMeshWithColor
+            where TTriangle : ITriangleMeshWithColorAndTexture
         {
             tris.Add(CreateTriangleOutward(v1, v2, v3, center, color, triangleFactory, noHidden));
             tris.Add(CreateTriangleOutward(v1, v3, v4, center, color, triangleFactory, noHidden));
@@ -472,7 +472,7 @@ namespace RetroMesh.Engine
             string color,
             Func<TTriangle> triangleFactory,
             bool noHidden = false)
-            where TTriangle : ITriangleMeshWithColor
+            where TTriangle : ITriangleMeshWithColorAndTexture
         {
             var edge1 = Subtract(v2, v1);
             var edge2 = Subtract(v3, v1);
@@ -599,7 +599,7 @@ namespace RetroMesh.Engine
         private static void AddShadowPart(
             IRenderable3dObject obj,
             Func<I3dObjectPart> objectPartFactory,
-            List<ITriangleMeshWithColor> tris)
+            List<ITriangleMeshWithColorAndTexture> tris)
         {
             NormalizeShadowGroundPlane(tris);
             var part = objectPartFactory();
@@ -609,7 +609,7 @@ namespace RetroMesh.Engine
             obj.ObjectParts.Add(part);
         }
 
-        private static void NormalizeShadowGroundPlane(List<ITriangleMeshWithColor> triangles)
+        private static void NormalizeShadowGroundPlane(List<ITriangleMeshWithColorAndTexture> triangles)
         {
             float minZ = float.MaxValue;
             foreach (var triangle in triangles)
@@ -758,14 +758,14 @@ namespace RetroMesh.Engine
             return result;
         }
 
-        private static List<ITriangleMeshWithColor> FanTriangulateXY(
+        private static List<ITriangleMeshWithColorAndTexture> FanTriangulateXY(
             List<(float x, float y)> hull,
             float z,
             string color,
-            Func<ITriangleMeshWithColor> triangleFactory,
+            Func<ITriangleMeshWithColorAndTexture> triangleFactory,
             Func<float, float, float, IVector3> vectorFactory)
         {
-            var tris = new List<ITriangleMeshWithColor>(hull.Count);
+            var tris = new List<ITriangleMeshWithColorAndTexture>(hull.Count);
             float cx = 0f;
             float cy = 0f;
             for (int i = 0; i < hull.Count; i++)
@@ -796,7 +796,7 @@ namespace RetroMesh.Engine
             string color,
             Func<TTriangle> triangleFactory,
             bool noHidden)
-            where TTriangle : ITriangleMeshWithColor
+            where TTriangle : ITriangleMeshWithColorAndTexture
         {
             var triangle = triangleFactory();
             triangle.Color = color;

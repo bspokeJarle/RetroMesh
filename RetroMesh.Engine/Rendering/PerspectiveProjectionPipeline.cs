@@ -117,6 +117,10 @@ namespace RetroMesh.Engine
                     projected.Normal = normal.z;
                     projected.TriangleAngle = triangle.angle;
                     projected.Color = triangle.Color ?? string.Empty;
+                    projected.TextureId = triangle.TextureId;
+                    projected.Uv1 = triangle.Uv1;
+                    projected.Uv2 = triangle.Uv2;
+                    projected.Uv3 = triangle.Uv3;
                     projected.PartName = part.PartName ?? string.Empty;
                     projected.UseEffectRenderingPipeline = RenderPipelineMarkers.ShouldUseEffectRenderingPipeline(objectName, part.PartName);
                     result.Add(projected);
