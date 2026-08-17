@@ -18,5 +18,8 @@ namespace RetroMesh.Engine
         TextureCoordinate Uv1 { get; set; }
         TextureCoordinate Uv2 { get; set; }
         TextureCoordinate Uv3 { get; set; }
+        float Rhw1 { get; set; }
+        float Rhw2 { get; set; }
+        float Rhw3 { get; set; }
     }
 }

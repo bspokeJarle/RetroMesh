@@ -30,6 +30,9 @@ public class EnginePerspectiveProjectionPipelineTests
         Assert.AreEqual(new TextureCoordinate(0f, 0f), result[0].Uv1);
         Assert.AreEqual(new TextureCoordinate(1f, 0f), result[0].Uv2);
         Assert.AreEqual(new TextureCoordinate(0.5f, 1f), result[0].Uv3);
+        Assert.IsTrue(result[0].Rhw1 > 0f);
+        Assert.IsTrue(result[0].Rhw2 > 0f);
+        Assert.IsTrue(result[0].Rhw3 > 0f);
     }
 
     [TestMethod]

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="RetroMesh.Engine.Tests/RetroMesh.Engine.Tests.csproj" />
   <Project Path="RetroMesh.Engine/RetroMesh.Engine.csproj" />
+  <Project Path="RetroMesh.Rendering.Direct3D11/RetroMesh.Rendering.Direct3D11.csproj" />
 </Solution>

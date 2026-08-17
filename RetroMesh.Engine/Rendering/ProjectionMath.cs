@@ -27,6 +27,34 @@ namespace RetroMesh.Engine
                 out screenPoint);
         }
 
+        public static bool TryProjectVertexWithReciprocalW(
+            IVector3 vertex,
+            double objectScreenX,
+            double objectScreenY,
+            double objectScreenZ,
+            IProjectionViewport viewport,
+            out (double x, double y) screenPoint,
+            out float reciprocalW)
+        {
+            ArgumentNullException.ThrowIfNull(vertex);
+            ArgumentNullException.ThrowIfNull(viewport);
+
+            double denominator = -vertex.z + objectScreenZ + viewport.PerspectiveAdjustment;
+            if (denominator <= NearPlaneSafetyMargin)
+            {
+                screenPoint = (double.NaN, double.NaN);
+                reciprocalW = 0f;
+                return false;
+            }
+
+            double factor = viewport.PerspectiveAdjustment / denominator;
+            screenPoint = (
+                vertex.x * factor * viewport.ObjectZoom + objectScreenX,
+                vertex.y * factor * viewport.ObjectZoom + objectScreenY);
+            reciprocalW = (float)factor;
+            return true;
+        }
+
         public static bool TryProjectVertex(
             IVector3 vertex,
             double objectScreenX,
