@@ -43,6 +43,8 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
     private int vertexCapacity;
     private int width;
     private int height;
+    private int projectionWidth;
+    private int projectionHeight;
     private bool disposed;
     private int renderingTriangleCount;
 
@@ -54,6 +56,8 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         this.windowHandle = windowHandle;
         this.width = Math.Max(1, width);
         this.height = Math.Max(1, height);
+        projectionWidth = this.width;
+        projectionHeight = this.height;
 
         factory = CreateDXGIFactory1<IDXGIFactory2>();
         DeviceCreationFlags flags = DeviceCreationFlags.BgraSupport;
@@ -146,6 +150,12 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         CreateBackBuffer();
     }
 
+    public void SetProjectionSize(int width, int height)
+    {
+        projectionWidth = Math.Max(1, width);
+        projectionHeight = Math.Max(1, height);
+    }
+
     public void RenderTriangles(List<ProjectedTriangleMesh> projectedTriangles)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
@@ -209,8 +219,8 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
 
     private GpuVertex CreateVertex(int x, int y, TextureCoordinate uv, float rhw, Vector4 color, float useTexture)
     {
-        float ndcX = (x / (float)width) * 2f - 1f;
-        float ndcY = 1f - (y / (float)height) * 2f;
+        float ndcX = (x / (float)projectionWidth) * 2f - 1f;
+        float ndcY = 1f - (y / (float)projectionHeight) * 2f;
         return new GpuVertex(ndcX, ndcY, color, uv.U, uv.V, rhw > 0f ? rhw : 1f, useTexture);
     }
 
