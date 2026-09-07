@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RetroMesh.Engine\RetroMesh.Engine.csproj" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="3.8.3" />
+    <PackageReference Include="Vortice.Direct3D11" Version="3.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embedded so the renderer always works with zero setup, and also copied to the
+         output so the shader can be tweaked and rerun without a rebuild. -->
+    <EmbeddedResource Include="Shaders\ProjectedTriangle.hlsl" LogicalName="RetroMesh.Rendering.Direct3D11.Shaders.ProjectedTriangle.hlsl" />
+    <None Include="Shaders\ProjectedTriangle.hlsl" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

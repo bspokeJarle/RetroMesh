@@ -14,5 +14,12 @@ namespace RetroMesh.Engine
         public int X3 { get; set; }
         public int Y3 { get; set; }
         public string Color { get; set; }
+        public string? TextureId { get; set; }
+        public TextureCoordinate Uv1 { get; set; }
+        public TextureCoordinate Uv2 { get; set; }
+        public TextureCoordinate Uv3 { get; set; }
+        public float Rhw1 { get; set; }
+        public float Rhw2 { get; set; }
+        public float Rhw3 { get; set; }
     }
 }

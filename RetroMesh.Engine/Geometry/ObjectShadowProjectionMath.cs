@@ -23,7 +23,7 @@ namespace RetroMesh.Engine
     public static class ObjectShadowProjectionMath
     {
         public static ObjectShadowProjectionResult ProjectModelTriangleShadow(
-            ITriangleMeshWithColor triangle,
+            ITriangleMeshWithColorAndTexture triangle,
             ObjectShadowProjectionOptions options)
         {
             float tiltRadians = options.SurfaceTiltDegrees * MathF.PI / 180f;

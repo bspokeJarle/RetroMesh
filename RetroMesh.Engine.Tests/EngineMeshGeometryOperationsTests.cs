@@ -15,7 +15,7 @@ public class EngineMeshGeometryOperationsTests
             {
                 new Engine3dObjectPart
                 {
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -61,7 +61,7 @@ public class EngineMeshGeometryOperationsTests
                 {
                     IsVisible = true,
                     PartName = "Main",
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -75,7 +75,7 @@ public class EngineMeshGeometryOperationsTests
                 {
                     IsVisible = false,
                     PartName = "Shadow",
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -122,7 +122,7 @@ public class EngineMeshGeometryOperationsTests
                 {
                     IsVisible = true,
                     PartName = "Main",
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -246,7 +246,7 @@ public class EngineMeshGeometryOperationsTests
             {
                 new Engine3dObjectPart
                 {
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -268,8 +268,12 @@ public class EngineMeshGeometryOperationsTests
         Assert.AreEqual(2f, centroid.z, 0.001f);
     }
 
-    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColor
+    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColorAndTexture
     {
         public string? Color { get; set; }
+        public string? TextureId { get; set; }
+        public TextureCoordinate Uv1 { get; set; }
+        public TextureCoordinate Uv2 { get; set; }
+        public TextureCoordinate Uv3 { get; set; }
     }
 }

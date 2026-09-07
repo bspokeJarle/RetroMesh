@@ -15,7 +15,7 @@ public class EngineTransformMathTests
         };
 
         bool found = GroundProjectionMath.TryGetSurfaceGroundPoint(
-            new List<ITriangleMeshWithColor> { triangle },
+            new List<ITriangleMeshWithColorAndTexture> { triangle },
             2.5f,
             2.5f,
             out float groundX,
@@ -98,7 +98,7 @@ public class EngineTransformMathTests
             {
                 new Engine3dObjectPart
                 {
-                    Triangles = new List<ITriangleMeshWithColor>
+                    Triangles = new List<ITriangleMeshWithColorAndTexture>
                     {
                         new EngineTriangleMeshWithColor
                         {
@@ -152,12 +152,12 @@ public class EngineTransformMathTests
         var cache = new TestSurfaceGeometryCache
         {
             LandBasedIds = new HashSet<long?> { 1 },
-            RotatedSurfaceTriangleByLandId = new Dictionary<long, ITriangleMeshWithColor>
+            RotatedSurfaceTriangleByLandId = new Dictionary<long, ITriangleMeshWithColorAndTexture>
             {
                 [1] = second
             }
         };
-        var rotatedTriangles = new List<ITriangleMeshWithColor> { first, second };
+        var rotatedTriangles = new List<ITriangleMeshWithColorAndTexture> { first, second };
 
         SurfaceGeometryCache.Update(cache, rotatedTriangles);
 
@@ -185,13 +185,17 @@ public class EngineTransformMathTests
 
     private sealed class TestSurfaceGeometryCache : ISurfaceGeometryCache
     {
-        public List<ITriangleMeshWithColor> RotatedSurfaceTriangles { get; set; } = new();
-        public Dictionary<long, ITriangleMeshWithColor> RotatedSurfaceTriangleByLandId { get; set; } = new();
+        public List<ITriangleMeshWithColorAndTexture> RotatedSurfaceTriangles { get; set; } = new();
+        public Dictionary<long, ITriangleMeshWithColorAndTexture> RotatedSurfaceTriangleByLandId { get; set; } = new();
         public HashSet<long?> LandBasedIds { get; set; } = new();
     }
 
-    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColor
+    private sealed class EngineTriangleMeshWithColor : EngineTriangleMesh, ITriangleMeshWithColorAndTexture
     {
         public string? Color { get; set; }
+        public string? TextureId { get; set; }
+        public TextureCoordinate Uv1 { get; set; }
+        public TextureCoordinate Uv2 { get; set; }
+        public TextureCoordinate Uv3 { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace RetroMesh.Engine
     {
         public static void Update(
             ISurfaceGeometryCache? cache,
-            List<ITriangleMeshWithColor> rotatedSurfaceTriangles)
+            List<ITriangleMeshWithColorAndTexture> rotatedSurfaceTriangles)
         {
             if (cache == null)
                 return;

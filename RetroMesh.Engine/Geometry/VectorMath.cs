@@ -76,7 +76,7 @@ namespace RetroMesh.Engine
             return Multiply(reflected, bounceFactor);
         }
 
-        public static EngineVector3 GetTriangleCenter(ITriangleMeshWithColor triangle)
+        public static EngineVector3 GetTriangleCenter(ITriangleMeshWithColorAndTexture triangle)
         {
             return new EngineVector3(
                 (triangle.vert1.x + triangle.vert2.x + triangle.vert3.x) / 3f,

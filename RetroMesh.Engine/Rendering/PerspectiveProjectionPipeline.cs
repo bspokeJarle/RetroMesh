@@ -93,9 +93,12 @@ namespace RetroMesh.Engine
                     var v2 = triangle.vert2;
                     var v3 = triangle.vert3;
 
-                    var (x1, y1) = ProjectVertex(v1, objPosX, objPosY, objPosZ);
-                    var (x2, y2) = ProjectVertex(v2, objPosX, objPosY, objPosZ);
-                    var (x3, y3) = ProjectVertex(v3, objPosX, objPosY, objPosZ);
+                    var (p1, rhw1) = ProjectVertex(v1, objPosX, objPosY, objPosZ);
+                    var (p2, rhw2) = ProjectVertex(v2, objPosX, objPosY, objPosZ);
+                    var (p3, rhw3) = ProjectVertex(v3, objPosX, objPosY, objPosZ);
+                    var (x1, y1) = p1;
+                    var (x2, y2) = p2;
+                    var (x3, y3) = p3;
 
                     if (double.IsNaN(x1) || double.IsNaN(x2) || double.IsNaN(x3))
                         continue;
@@ -117,6 +120,13 @@ namespace RetroMesh.Engine
                     projected.Normal = normal.z;
                     projected.TriangleAngle = triangle.angle;
                     projected.Color = triangle.Color ?? string.Empty;
+                    projected.TextureId = triangle.TextureId;
+                    projected.Uv1 = triangle.Uv1;
+                    projected.Uv2 = triangle.Uv2;
+                    projected.Uv3 = triangle.Uv3;
+                    projected.Rhw1 = rhw1;
+                    projected.Rhw2 = rhw2;
+                    projected.Rhw3 = rhw3;
                     projected.PartName = part.PartName ?? string.Empty;
                     projected.UseEffectRenderingPipeline = RenderPipelineMarkers.ShouldUseEffectRenderingPipeline(objectName, part.PartName);
                     result.Add(projected);
@@ -146,9 +156,9 @@ namespace RetroMesh.Engine
 
                 foreach (var (i1, i2, i3) in CrashBoxFaceTriangles)
                 {
-                    var p1 = ProjectVertex(corners[i1], objPosX, objPosY, objPosZ);
-                    var p2 = ProjectVertex(corners[i2], objPosX, objPosY, objPosZ);
-                    var p3 = ProjectVertex(corners[i3], objPosX, objPosY, objPosZ);
+                    var p1 = ProjectScreenVertex(corners[i1], objPosX, objPosY, objPosZ);
+                    var p2 = ProjectScreenVertex(corners[i2], objPosX, objPosY, objPosZ);
+                    var p3 = ProjectScreenVertex(corners[i3], objPosX, objPosY, objPosZ);
 
                     if (!ProjectionMath.TryClampTriangleToViewport(
                             ref p1,
@@ -175,15 +185,31 @@ namespace RetroMesh.Engine
             }
         }
 
-        private (double x, double y) ProjectVertex(
+        private ((double x, double y) point, float reciprocalW) ProjectVertex(
             IVector3 vertex,
             double objPosX,
             double objPosY,
             double objPosZ)
         {
-            return ProjectionMath.TryProjectVertex(vertex, objPosX, objPosY, objPosZ, viewport, out var screenPoint)
-                ? screenPoint
-                : (double.NaN, double.NaN);
+            return ProjectionMath.TryProjectVertexWithReciprocalW(
+                vertex,
+                objPosX,
+                objPosY,
+                objPosZ,
+                viewport,
+                out var screenPoint,
+                out float reciprocalW)
+                ? (screenPoint, reciprocalW)
+                : ((double.NaN, double.NaN), 0f);
+        }
+
+        private (double x, double y) ProjectScreenVertex(
+            IVector3 vertex,
+            double objPosX,
+            double objPosY,
+            double objPosZ)
+        {
+            return ProjectVertex(vertex, objPosX, objPosY, objPosZ).point;
         }
     }
 }
