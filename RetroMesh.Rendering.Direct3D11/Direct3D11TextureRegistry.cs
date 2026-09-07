@@ -3,6 +3,12 @@ using Vortice.DXGI;
 
 namespace RetroMesh.Rendering.Direct3D11;
 
+/// <summary>
+/// Registry of GPU textures owned by <see cref="Direct3D11ProjectedTriangleRenderer"/>.
+/// The renderer owns the lifetime of every registered texture and disposes them, so
+/// <see cref="IDisposable.Dispose"/> is implemented explicitly and is not part of the
+/// normal surface area. Consumers should only call <see cref="RegisterBgra32"/>.
+/// </summary>
 public sealed class Direct3D11TextureRegistry : IDisposable
 {
     private readonly ID3D11Device device;
@@ -30,16 +36,23 @@ public sealed class Direct3D11TextureRegistry : IDisposable
         textures.Add(textureId, resource);
     }
 
-    internal bool TryGetView(string? textureId, out ID3D11ShaderResourceView view)
+    /// <summary>
+    /// Returns whether a texture is registered under <paramref name="textureId"/>.
+    /// </summary>
+    internal bool Contains(string? textureId)
+        => textureId != null && textures.ContainsKey(textureId);
+
+    /// <summary>
+    /// Returns the view registered under <paramref name="textureId"/>, or the opaque
+    /// white 1x1 fallback view when the id is null or unregistered. Never returns null,
+    /// so an unregistered id renders as untextured vertex color rather than failing.
+    /// </summary>
+    internal ID3D11ShaderResourceView GetViewOrFallback(string? textureId)
     {
         if (textureId != null && textures.TryGetValue(textureId, out TextureResource? resource))
-        {
-            view = resource.View;
-            return true;
-        }
+            return resource.View;
 
-        view = fallbackTexture.View;
-        return false;
+        return fallbackTexture.View;
     }
 
     private unsafe TextureResource CreateTexture(int width, int height, ReadOnlySpan<byte> pixels)
@@ -65,7 +78,7 @@ public sealed class Direct3D11TextureRegistry : IDisposable
         }
     }
 
-    public void Dispose()
+    void IDisposable.Dispose()
     {
         foreach (TextureResource texture in textures.Values)
             texture.Dispose();

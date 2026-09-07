@@ -155,6 +155,33 @@ the reference game build:
 dotnet build ..\TheOmegaStrain.sln --no-restore
 ```
 
+## Upgrading
+
+### `ITriangleMeshWithColor` replaced by `ITriangleMeshWithColorAndTexture`
+
+`ITriangleMeshWithColor` has been removed. Triangle meshes now implement
+`ITriangleMeshWithColorAndTexture`, which keeps the existing `Color` property and
+adds an optional `TextureId` plus one `TextureCoordinate` per vertex (`Uv1`,
+`Uv2`, `Uv3`).
+
+To migrate, change the interface name on your mesh types. Existing color-only
+meshes need no further work: leave `TextureId` null and the triangle keeps using
+the color rendering path exactly as before.
+
+```csharp
+// Before
+public class MyTriangle : ITriangleMeshWithColor
+
+// After
+public class MyTriangle : ITriangleMeshWithColorAndTexture
+{
+    public string? TextureId { get; set; }          // null => color path
+    public TextureCoordinate Uv1 { get; set; }
+    public TextureCoordinate Uv2 { get; set; }
+    public TextureCoordinate Uv3 { get; set; }
+}
+```
+
 ## Design Rules
 
 - Keep `RetroMesh.Engine` free from references back to game projects.

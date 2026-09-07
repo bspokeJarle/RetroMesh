@@ -8,7 +8,7 @@ namespace RetroMesh.Engine
         private const int Brightness = 3;
         private static readonly char[] HexChars = "0123456789ABCDEF".ToCharArray();
 
-        public static string GetShadeOfColorFromNormal(float normal, string? color)
+        public static (int R, int G, int B) GetShadeChannelsFromNormal(float normal, string? color)
         {
             ReadOnlySpan<char> span = string.IsNullOrEmpty(color)
                 ? "000000".AsSpan()
@@ -18,13 +18,19 @@ namespace RetroMesh.Engine
                 span = span[1..];
 
             if (span.Length < 6)
-                return "#000000";
+                return (0, 0, 0);
 
             float localNormal = Math.Abs(normal);
 
-            int r = Math.Clamp((int)(ParseHexByte(span[0], span[1]) * localNormal) + Brightness, 0, 255);
-            int g = Math.Clamp((int)(ParseHexByte(span[2], span[3]) * localNormal) + Brightness, 0, 255);
-            int b = Math.Clamp((int)(ParseHexByte(span[4], span[5]) * localNormal) + Brightness, 0, 255);
+            return (
+                Math.Clamp((int)(ParseHexByte(span[0], span[1]) * localNormal) + Brightness, 0, 255),
+                Math.Clamp((int)(ParseHexByte(span[2], span[3]) * localNormal) + Brightness, 0, 255),
+                Math.Clamp((int)(ParseHexByte(span[4], span[5]) * localNormal) + Brightness, 0, 255));
+        }
+
+        public static string GetShadeOfColorFromNormal(float normal, string? color)
+        {
+            var (r, g, b) = GetShadeChannelsFromNormal(normal, color);
 
             return string.Create(7, (r, g, b), static (dst, rgb) =>
             {

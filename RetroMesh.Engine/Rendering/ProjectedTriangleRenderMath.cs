@@ -21,6 +21,36 @@ namespace RetroMesh.Engine
             return calculatedZ >= nearZ && calculatedZ <= farZ;
         }
 
+        /// <summary>
+        /// Returns whether a projected vertex has a usable reciprocal W. The projection
+        /// pipeline emits zero for vertices behind the near plane, which cannot be
+        /// perspective-corrected and must not be rendered.
+        /// </summary>
+        public static bool IsRenderableReciprocalW(float reciprocalW)
+        {
+            return reciprocalW > 0f && float.IsFinite(reciprocalW);
+        }
+
+        /// <summary>
+        /// Maps a projected pixel coordinate into normalized device coordinates, where
+        /// X runs left-to-right from -1 to 1 and Y runs bottom-to-top from -1 to 1.
+        /// </summary>
+        public static (float X, float Y) ScreenToNormalizedDevice(
+            int x,
+            int y,
+            int projectionWidth,
+            int projectionHeight)
+        {
+            if (projectionWidth <= 0)
+                throw new ArgumentOutOfRangeException(nameof(projectionWidth));
+            if (projectionHeight <= 0)
+                throw new ArgumentOutOfRangeException(nameof(projectionHeight));
+
+            return (
+                (x / (float)projectionWidth) * 2f - 1f,
+                1f - (y / (float)projectionHeight) * 2f);
+        }
+
         public static int CullTrianglesOutsideRenderDepth<TTriangle>(
             List<TTriangle> triangles,
             float nearZ,

@@ -13,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Embedded so the renderer always works with zero setup, and also copied to the
+         output so the shader can be tweaked and rerun without a rebuild. -->
+    <EmbeddedResource Include="Shaders\ProjectedTriangle.hlsl" LogicalName="RetroMesh.Rendering.Direct3D11.Shaders.ProjectedTriangle.hlsl" />
     <None Include="Shaders\ProjectedTriangle.hlsl" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
