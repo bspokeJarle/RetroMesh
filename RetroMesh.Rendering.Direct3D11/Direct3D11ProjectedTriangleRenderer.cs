@@ -196,6 +196,9 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
     public Direct3D11TextureRegistry Textures => textureRegistry;
     public bool VerticalSync { get; set; } = true;
     public Color4 ClearColor { get; set; } = new(0.02f, 0.03f, 0.045f, 1f);
+    public float ShadeNearZ { get; set; } = -1200f;
+    public float ShadeFarZ { get; set; } = 1800f;
+    public float MinimumShade { get; set; }
 
     /// <summary>
     /// When true (the default), triangles with a vertex behind the near plane are rejected
@@ -333,10 +336,11 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
         return new GpuVertex(ndcX, ndcY, color, uv.U, uv.V, safeRhw, useTexture);
     }
 
-    private static Vector4 GetShadedColor(ProjectedTriangleMesh triangle)
+    private Vector4 GetShadedColor(ProjectedTriangleMesh triangle)
     {
         float shadeKey = RenderShadeMath.GetTriangleShadeKey(
-            triangle.CalculatedZ, triangle.TriangleAngle, -1200f, 1800f);
+            triangle.CalculatedZ, triangle.TriangleAngle, ShadeNearZ, ShadeFarZ);
+        shadeKey = Math.Max(Math.Clamp(MinimumShade, 0f, 1f), shadeKey);
         var (r, g, b) = RenderColorShading.GetShadeChannelsFromNormal(shadeKey, triangle.Color);
         return new Vector4(r / 255f, g / 255f, b / 255f, 1f);
     }
