@@ -14,6 +14,7 @@ namespace RetroMesh.Engine
         int X3 { get; set; }
         int Y3 { get; set; }
         string Color { get; set; }
+        float Opacity { get; set; }
         string? TextureId { get; set; }
         TextureCoordinate Uv1 { get; set; }
         TextureCoordinate Uv2 { get; set; }
