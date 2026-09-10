@@ -342,7 +342,8 @@ public sealed class Direct3D11ProjectedTriangleRenderer :
             triangle.CalculatedZ, triangle.TriangleAngle, ShadeNearZ, ShadeFarZ);
         shadeKey = Math.Max(Math.Clamp(MinimumShade, 0f, 1f), shadeKey);
         var (r, g, b) = RenderColorShading.GetShadeChannelsFromNormal(shadeKey, triangle.Color);
-        return new Vector4(r / 255f, g / 255f, b / 255f, 1f);
+        float alpha = ProjectedTriangleRenderMath.ResolveOpacity(triangle.Opacity);
+        return new Vector4(r / 255f, g / 255f, b / 255f, alpha);
     }
 
     private void EnsureVertexBuffer(int requiredVertices)

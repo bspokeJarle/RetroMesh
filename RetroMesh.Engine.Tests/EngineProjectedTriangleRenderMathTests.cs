@@ -4,6 +4,16 @@ namespace RetroMesh.Engine.Tests;
 [TestClass]
 public class EngineProjectedTriangleRenderMathTests
 {
+    [DataTestMethod]
+    [DataRow(0f, 1f)]
+    [DataRow(-0.5f, 1f)]
+    [DataRow(0.35f, 0.35f)]
+    [DataRow(2f, 1f)]
+    public void ResolveOpacity_PreservesLegacyOpaqueDefaultAndClampsExplicitAlpha(float input, float expected)
+    {
+        Assert.AreEqual(expected, ProjectedTriangleRenderMath.ResolveOpacity(input));
+    }
+
     [TestMethod]
     public void CullTrianglesOutsideRenderDepth_RemovesOutOfRangeTriangles()
     {

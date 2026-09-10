@@ -148,6 +148,18 @@ namespace RetroMesh.Engine
             return normalized.ToLowerInvariant();
         }
 
+        /// <summary>
+        /// Keeps existing projected triangles opaque while allowing render backends
+        /// to opt into explicit alpha for additional effect passes.
+        /// </summary>
+        public static float ResolveOpacity(float opacity)
+        {
+            if (!float.IsFinite(opacity) || opacity <= 0f)
+                return 1f;
+
+            return Math.Clamp(opacity, 0f, 1f);
+        }
+
         private static bool ShouldRenderEnhancedShadow(string? partName, ProjectedTriangleRenderOptions options)
         {
             return options.HighGraphicsQuality &&

@@ -14,6 +14,11 @@ namespace RetroMesh.Engine
         public int X3 { get; set; }
         public int Y3 { get; set; }
         public string Color { get; set; }
+        /// <summary>
+        /// Optional per-triangle opacity. Zero preserves the legacy opaque default;
+        /// positive values are clamped to the 0..1 alpha range by renderers.
+        /// </summary>
+        public float Opacity { get; set; }
         public string? TextureId { get; set; }
         public TextureCoordinate Uv1 { get; set; }
         public TextureCoordinate Uv2 { get; set; }
